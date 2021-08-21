@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "Simple JSON Editor component built for use in Material UI projects",
   "main": "build/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/andrewlowndes/material-jsoneditor.git"
+  },
   "scripts": {
     "start": "webpack serve",
     "build": "tsc --project tsconfig_prod.json",

@@ -24,7 +24,7 @@ const myComponent = () => {
 ```
 
 ## Demo
-Visit https://andrewlowndes.github.io/material_json_editor/dist/ to use the pre-built editor online. Copy your JSON into the right panel and edit on the left.
+Visit https://andrewlowndes.github.io/material-jsoneditor/dist/ to use the pre-built editor online. Copy your JSON into the right panel and edit on the left.
 
 ## Roadmap
 - [x] Change types at any depth (number, boolean, string, array, object and null)
