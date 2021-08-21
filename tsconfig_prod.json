@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "lib": ["DOM"],
+    "jsx": "react",
+    "outDir": "./build",
+    "declaration": true,
+    "sourceMap": false,
+    "strict": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "alwaysStrict": true,
+    "downlevelIteration": true
+  },
+  "include": ["src/**/**.tsx", "src/**/**.ts"],
+  "exclude": ["node_modules"]
+}
