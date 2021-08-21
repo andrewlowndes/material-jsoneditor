@@ -1,6 +1,6 @@
 {
   "name": "material-jsoneditor",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Simple JSON Editor component built for use in Material UI projects",
   "main": "build/index.js",
   "repository": {
