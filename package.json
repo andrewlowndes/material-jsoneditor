@@ -1,6 +1,6 @@
 {
   "name": "material-jsoneditor",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "Simple JSON Editor component built for use in Material UI projects",
   "main": "build/index.js",
   "repository": {
@@ -10,25 +10,52 @@
   "scripts": {
     "start": "webpack serve",
     "build": "tsc --project tsconfig_prod.json",
-    "dist": "webpack --mode production --no-devtool"
+    "lint": "eslint --fix {src,test}/**/*.{js,ts,jsx,tsx} --no-error-on-unmatched-pattern",
+    "format": "prettier --config .prettierrc --write {src,test}/**/* ./*.{json,*.json} !package-lock.json -u --no-error-on-unmatched-pattern",
+    "dist": "webpack --mode production --no-devtool",
+    "prepare": "husky install"
   },
   "author": "Andrew Lowndes",
   "license": "MIT",
   "devDependencies": {
-    "@types/react": "^17.0.19",
-    "@types/react-dom": "^17.0.9",
-    "ts-loader": "^9.2.5",
-    "typescript": "^4.3.5",
-    "webpack": "^5.51.1",
-    "webpack-cli": "^4.8.0",
-    "webpack-dev-server": "^4.0.0"
+    "@types/react": "^17.0.39",
+    "@types/react-dom": "^17.0.13",
+    "@typescript-eslint/eslint-plugin": "^5.13.0",
+    "@typescript-eslint/parser": "^5.13.0",
+    "eslint": "^8.2.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-airbnb-typescript": "^16.1.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.29.3",
+    "eslint-plugin-react-hooks": "^4.3.0",
+    "husky": "^7.0.4",
+    "lint-staged": "^12.3.5",
+    "prettier": "^2.5.1",
+    "ts-loader": "^9.2.7",
+    "typescript": "^4.6.2",
+    "webpack": "^5.70.0",
+    "webpack-cli": "^4.9.2",
+    "webpack-dev-server": "^4.7.4"
   },
   "peerDependencies": {
+    "csstype": "3.0.10",
     "@emotion/react": "^11.4.1",
     "@emotion/styled": "^11.3.0",
-    "@material-ui/core": "^5.0.0-beta.4",
-    "@material-ui/icons": "^5.0.0-beta.4",
+    "@mui/icons-material": "^5.4.4",
+    "@mui/material": "^5.4.4",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
+  },
+  "lint-staged": {
+    "lint-staged": {
+      "{src,test}/**/*.{js,ts,jsx,tsx}": [
+        "eslint --fix",
+        "prettier --write -u"
+      ],
+      "!**/*.{js,ts,jsx,tsx}": "prettier --write -u"
+    }
   }
 }

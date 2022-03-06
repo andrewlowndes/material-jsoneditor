@@ -1,34 +1,34 @@
-import { TextField } from '@material-ui/core';
+import { TextField } from '@mui/material';
 import React from 'react';
 
 export interface StringEditorProps {
-    label: string;
-    value: string;
-    onChange: (newValue: string) => void;
+  label: string;
+  value: string;
+  onChange: (newValue: string) => void;
 }
 
-export const StringEditor = (props: StringEditorProps) => {
-    return (
-        <TextField
-            sx={{
-                '& .MuiInputBase-root': {
-                    flex: 1
-                }
-            }}
-            label={props.label}
-            margin="dense"
-            fullWidth={true}
-            style={{ flex: 1 }}
-            InputLabelProps={{ shrink: true }}
-            inputProps={{ style: { height: '100%', overflow: 'auto' } }}
-            hiddenLabel={true}
-            autoCorrect="off" 
-            spellCheck="false" 
-            autoComplete="off"
-            multiline={true}
-            variant="outlined"
-            value={props.value}
-            onChange={(e) => props.onChange(e.target.value)}
-        />
-    );
-};
+export function StringEditor({ label, value, onChange }: StringEditorProps) {
+  return (
+    <TextField
+      sx={{
+        '& .MuiInputBase-root': {
+          flex: 1,
+        },
+      }}
+      label={label}
+      margin="dense"
+      fullWidth
+      style={{ flex: 1 }}
+      InputLabelProps={{ shrink: true }}
+      inputProps={{ style: { height: '100%', overflow: 'auto' } }}
+      hiddenLabel
+      autoCorrect="off"
+      spellCheck="false"
+      autoComplete="off"
+      multiline
+      variant="outlined"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+    />
+  );
+}

@@ -1,100 +1,75 @@
-import { Chip, styled, emphasize, MenuItem, MenuList, Popper, Grow, Paper, ClickAwayListener } from '@material-ui/core';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { MenuItem, MenuList, Popper, Paper, ClickAwayListener } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import React, { KeyboardEvent, MouseEvent, ReactElement } from 'react';
 
-const ChipBreadcrumb = styled(Chip)(({ theme }) => {
-    const backgroundColor = theme.palette.mode === 'light' ? theme.palette.grey[100]: theme.palette.grey[800];
-    
-    return {
-        backgroundColor,
-        height: theme.spacing(3),
-        color: theme.palette.text.primary,
-        fontWeight: theme.typography.fontWeightRegular,
-        '&:hover, &:focus': {
-            backgroundColor: emphasize(backgroundColor, 0.06),
-        },
-        '&:active': {
-            boxShadow: theme.shadows[1],
-            backgroundColor: emphasize(backgroundColor, 0.12),
-        }
-    };
-});
-
-export type Path = Array<string | number>;
+import type { Breadcrumb } from '../interfaces/Breadcrumb';
+import ChipBreadcrumb from './ChipBreadcrumb';
 
 export interface LevelBreadcrumbProps {
-    icon?: ReactElement;
-    label: string;
-    onSelect: (string: string | number) => void;
-    items?: Array<string | number>;
+  icon?: ReactElement;
+  item: Breadcrumb;
+  onSelect: (item: Breadcrumb) => void;
+  items?: Array<Breadcrumb>;
 }
 
-export const LevelBreadcrumb = (props: LevelBreadcrumbProps) => {
-    const [anchorEl, setAnchorEl] = React.useState<HTMLElement | undefined>(undefined);
+export function LevelBreadcrumb({ items, onSelect, icon, item }: LevelBreadcrumbProps) {
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | undefined>(undefined);
 
-    const openMenu = (e: MouseEvent<HTMLElement>) => {
-        setAnchorEl(e.target as HTMLElement);
-    };
+  const openMenu = (e: MouseEvent<HTMLElement>) => {
+    setAnchorEl(e.target as HTMLElement);
+  };
 
-    const closeMenu = () => {
-        setAnchorEl(undefined);
-    };
+  const closeMenu = () => {
+    setAnchorEl(undefined);
+  };
 
-    const selectMenuItem = (item: string | number) => {
-        closeMenu();
-        props.onSelect(item);
-    };
+  const selectMenuItem = (selectedItem: Breadcrumb) => {
+    closeMenu();
+    onSelect(selectedItem);
+  };
 
-    const handleListKeyDown = (e: KeyboardEvent) => {
-        if (e.key === 'Tab') {
-            e.preventDefault();
-            closeMenu();
-        } else if (e.key === 'Escape') {
-            closeMenu();
-        }
-    };
+  const handleListKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      closeMenu();
+    } else if (e.key === 'Escape') {
+      closeMenu();
+    }
+  };
 
-    return props.items?.length ? (
-        <div style={{ position: 'relative' }}>
-            <ChipBreadcrumb 
-                icon={props.icon}
-                label={props.label}
-                onClick={() => props.onSelect(props.label)}
-                deleteIcon={<ExpandMoreIcon />}
-                onDelete={openMenu}
-                aria-controls="basic-menu"
-                aria-haspopup="true"
-                aria-expanded={anchorEl ? 'true' : undefined}
-            />
+  return items?.length ? (
+    <div style={{ position: 'relative' }}>
+      <ChipBreadcrumb
+        icon={icon}
+        label={item}
+        onClick={() => onSelect(item)}
+        deleteIcon={<ExpandMoreIcon />}
+        onDelete={openMenu}
+        aria-controls="basic-menu"
+        aria-haspopup="true"
+        aria-expanded={anchorEl ? 'true' : undefined}
+      />
 
-            <Popper
-                open={Boolean(anchorEl)}
-                role={undefined}
-                anchorEl={anchorEl}
-                placement="bottom"
-            >
-                <Paper>
-                    <ClickAwayListener onClickAway={closeMenu}>
-                        <MenuList
-                            dense
-                            autoFocusItem={Boolean(anchorEl)}
-                            onKeyDown={handleListKeyDown}
-                        >
-                            {
-                                props.items?.map((item, index) => (
-                                    <MenuItem key={index} onClick={() => selectMenuItem(item)}>{item}</MenuItem>
-                                ))
-                            }
-                        </MenuList>
-                    </ClickAwayListener>
-                </Paper>
-            </Popper>
-        </div>
-    ) : (
-        <ChipBreadcrumb 
-            icon={props.icon}
-            label={props.label}
-            onClick={() => props.onSelect(props.label)}
-        />
-    );
+      <Popper open={Boolean(anchorEl)} role={undefined} anchorEl={anchorEl} placement="bottom">
+        <Paper>
+          <ClickAwayListener onClickAway={closeMenu}>
+            <MenuList dense autoFocusItem={Boolean(anchorEl)} onKeyDown={handleListKeyDown}>
+              {items?.map((listItem) => (
+                <MenuItem key={listItem} onClick={() => selectMenuItem(listItem)}>
+                  {listItem}
+                </MenuItem>
+              ))}
+            </MenuList>
+          </ClickAwayListener>
+        </Paper>
+      </Popper>
+    </div>
+  ) : (
+    <ChipBreadcrumb icon={icon} label={item} onClick={() => onSelect(item)} />
+  );
+}
+
+LevelBreadcrumb.defaultProps = {
+  icon: undefined,
+  items: [],
 };

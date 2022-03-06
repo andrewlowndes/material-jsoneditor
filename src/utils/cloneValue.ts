@@ -1,13 +1,15 @@
-import type { JSONType } from "../interfaces/JSONType";
+import type { JSONType } from '../interfaces/JSONType';
 
-export const cloneValue = <T = JSONType>(value: T): T => {
-    if (Array.isArray(value)) {
-        return [...value] as unknown as T;
-    }
+function cloneValue<T = JSONType>(value: T): T {
+  if (Array.isArray(value)) {
+    return [...value] as unknown as T;
+  }
 
-    if (typeof value === 'object' && value !== null) {
-        return { ...value };
-    }
+  if (typeof value === 'object' && value !== null) {
+    return { ...value };
+  }
 
-    return value;
-};
+  return value;
+}
+
+export default cloneValue;

@@ -1,150 +1,164 @@
-import { Button, TextField, Stack, Box } from '@material-ui/core';
-import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
-import React, { useEffect, useState } from 'react';
+import { Button, TextField, Stack, Box } from '@mui/material';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import type { JSONArray, JSONObject, JSONType } from '../interfaces/JSONType';
-import { deleteChild } from '../utils/deleteChild';
-import { getChild } from '../utils/getChild';
-import { setChild } from '../utils/setChild';
+import type { Breadcrumb } from '../interfaces/Breadcrumb';
 import { ValueEditor } from './editors/ValueEditor';
-import { typeFromValue } from '../utils/typeFromValue';
-import { valueFromType } from '../utils/valueFromType';
+import deleteChild from '../utils/deleteChild';
+import getChild from '../utils/getChild';
+import setChild from '../utils/setChild';
+import typeFromValue from '../utils/typeFromValue';
+import valueFromType from '../utils/valueFromType';
 import { LevelSelector } from './LevelSelector';
 
+const newArrayItemValue = (subobj: JSONArray) => {
+  if (subobj.length > 0) {
+    const lastItem = subobj[subobj.length - 1];
+    return valueFromType(typeFromValue(lastItem));
+  }
+
+  return '';
+};
+
+const newObjectItemValue = (subobj: JSONObject) => {
+  const objKeys = Object.keys(subobj);
+
+  if (objKeys.length > 0) {
+    const lastItem = subobj[objKeys[objKeys.length - 1]];
+    return valueFromType(typeFromValue(lastItem));
+  }
+
+  return '';
+};
+
+const newObjectItemKey = (subobj: JSONObject) => {
+  // create a new property name that uses the last property name with new number of the end
+  const objKeys = Object.keys(subobj);
+
+  let i = 1;
+  let newKey = `item${i}`;
+  while (objKeys.includes(newKey)) {
+    i += 1;
+    newKey = `item${i}`;
+  }
+
+  return newKey;
+};
+
 export interface EditorProps {
-    value: JSONType;
-    onChange: (newValue: JSONType) => void;
+  value: JSONType;
+  onChange: (newValue: JSONType) => void;
 }
 
-export const Editor = (props: EditorProps) => {
-    const [path, setPath] = useState<Array<string | number>>([]);
-    const [obj, setObj] = useState(props.value);
+export function Editor({ value, onChange }: EditorProps) {
+  const [path, setPath] = useState<Array<Breadcrumb>>([]);
+  const [obj, setObj] = useState(value);
 
-    const [propName, setPropName] = useState<string | number | undefined>(path[path.length - 1]);
+  const [propName, setPropName] = useState<string | number | undefined>(path[path.length - 1]);
 
-    useEffect(() => {
-        setPropName(path[path.length - 1]);
-    }, [path]);
+  useEffect(() => {
+    setPropName(path[path.length - 1]);
+  }, [path]);
 
-    const setNewPropName = () => {
-        const newPath = [ ...path.slice(0, path.length-1), propName!];
-        const existingItem = getChild(obj, path);
-        let newObj = deleteChild(obj, path);
-        newObj = setChild(newObj, newPath, existingItem);
-        setObj(newObj);
-        setPath(newPath);
-        props.onChange(newObj);
-    };
+  useEffect(() => {
+    setObj(value);
+  }, [value]);
 
-    const newArrayItemValue = (obj: JSONArray) => {
-        if (obj.length > 0) {
-            const lastItem = obj[obj.length-1];
-            return valueFromType(typeFromValue(lastItem));
-        }
-        
-        return '';
-    };
+  const setNewPropName = () => {
+    const newPath = path.slice(0, path.length - 1);
 
-    const newObjectItemValue = (obj: JSONObject) => {
-        const objKeys = Object.keys(obj);
+    if (propName !== undefined) {
+      newPath.push(propName);
+    }
 
-        if (objKeys.length > 0) {
-            const lastItem = obj[objKeys[objKeys.length - 1]];
-            return valueFromType(typeFromValue(lastItem));
-        }
+    const existingItem = getChild(obj, path);
+    const newObj = setChild(deleteChild(obj, path), newPath, existingItem);
+    setObj(newObj);
+    setPath(newPath);
+    onChange(newObj);
+  };
 
-        return '';
-    };
-    
-    const newObjectItemKey = (obj: JSONObject) => {
-        //create a new property name that uses the last property name with new number of the end
-        const objKeys = Object.keys(obj);
+  const updateObj = useCallback(
+    (subobj: JSONType) => {
+      const newObj = setChild(obj, path, subobj);
+      setObj(newObj);
+      onChange(newObj);
+    },
+    [obj, path, onChange],
+  );
 
-        let i = 1;
-        let newKey: string;
-        while ((newKey = `item${i}`) && objKeys.includes(newKey)) {
-            i++;
-        }
+  const deleteCurrent = () => {
+    const newObj = deleteChild(obj, path);
+    setObj(newObj);
+    setPath(path.slice(0, path.length - 1));
+    onChange(newObj);
+  };
 
-        return newKey;
-    };
+  return (
+    <Stack
+      width="100%"
+      direction="column"
+      justifyContent="flex-start"
+      alignItems="flex-start"
+      spacing={2}
+    >
+      <LevelSelector path={path} setPath={setPath} obj={obj} />
 
-    const updateObj = (subobj: JSONType) => {
-        const newObj = setChild(obj, path, subobj);
-        setObj(newObj);
-        props.onChange(newObj);
-    };
-
-    const deleteCurrent = () => {
-        const newObj = deleteChild(obj, path);
-        setObj(newObj);
-        setPath(path.slice(0, path.length-1));
-        props.onChange(newObj);
-    };
-
-    useEffect(() => {
-        setObj(props.value);
-    }, [props.value]);
-
-    return (
+      <Stack
+        display="flex"
+        flex="1"
+        width="100%"
+        direction="column"
+        justifyContent="flex-start"
+        alignItems="flex-start"
+        spacing={2}
+      >
         <Stack
-            width="100%"
-            direction="column"
-            justifyContent="flex-start"
-            alignItems="flex-start"
-            spacing={2}
+          display="flex"
+          direction="column"
+          justifyContent="flex-start"
+          alignItems="flex-start"
+          width="100%"
+          flex="1"
+          spacing={2}
         >
-            <LevelSelector
-                path={path}
-                setPath={setPath}
-                obj={obj}
+          {typeof propName === 'string' ? (
+            <TextField
+              size="small"
+              fullWidth
+              label="Property Name"
+              value={propName}
+              InputLabelProps={{ shrink: true }}
+              onChange={(e) => setPropName(e.target.value)}
+              onBlur={setNewPropName}
             />
+          ) : undefined}
 
-            <Stack
-                display="flex"
-                flex="1"
-                width="100%"
-                direction="column"
-                justifyContent="flex-start"
-                alignItems="flex-start"
-                spacing={2}
-            >
-                <Stack 
-                    display="flex" 
-                    direction="column"
-                    justifyContent="flex-start"
-                    alignItems="flex-start"
-                    width="100%" 
-                    flex="1"
-                    spacing={2}
-                >
-                    {propName !== undefined ? (
-                        <TextField 
-                            size="small" 
-                            fullWidth={true} 
-                            label="Property Name" 
-                            value={propName}
-                            InputLabelProps={{ shrink: true }}
-                            onChange={(e) => setPropName(e.target.value)} 
-                            onBlur={setNewPropName} />
-                    ) : undefined}
-
-                    <ValueEditor
-                        newArrayItemValue={newArrayItemValue}
-                        newObjectItemValue={newObjectItemValue}
-                        newObjectItemKey={newObjectItemKey}
-                        value={getChild(obj, path)}
-                        onEdit={(index) => setPath([...path, index])}
-                        onChange={(newValue) => updateObj(newValue)}
-                    />
-                </Stack>
-
-                {path.length > 0 ? (
-                    <Box width="100%">
-                        <Button endIcon={<DeleteForeverIcon />} color="error" variant="outlined" fullWidth={true} onClick={deleteCurrent}>Delete</Button>
-                    </Box>
-                ) : undefined }
-            </Stack>
+          <ValueEditor
+            newArrayItemValue={newArrayItemValue}
+            newObjectItemValue={newObjectItemValue}
+            newObjectItemKey={newObjectItemKey}
+            value={getChild(obj, path)}
+            onEdit={(index) => setPath([...path, index])}
+            onChange={updateObj}
+          />
         </Stack>
-    );
-};
+
+        {path.length > 0 ? (
+          <Box width="100%">
+            <Button
+              endIcon={<DeleteForeverIcon />}
+              color="error"
+              variant="outlined"
+              fullWidth
+              onClick={deleteCurrent}
+            >
+              Delete
+            </Button>
+          </Box>
+        ) : undefined}
+      </Stack>
+    </Stack>
+  );
+}

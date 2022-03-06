@@ -1,19 +1,17 @@
 import React from 'react';
-import { FormControlLabel, Switch } from '@material-ui/core';
+import { FormControlLabel, Switch } from '@mui/material';
 
 export interface BooleanEditorProps {
-    label: string;
-    value: boolean;
-    onChange: (newValue: boolean) => void;
+  label: string;
+  value: boolean;
+  onChange: (newValue: boolean) => void;
 }
 
-export const BooleanEditor = (props: BooleanEditorProps) => {
-    return (
-        <FormControlLabel
-            label={props.label}
-            control={(
-                <Switch checked={props.value} onChange={(_e, checked) => props.onChange(checked)} />
-            )}
-        />
-    )
-};
+export function BooleanEditor({ label, value, onChange }: BooleanEditorProps) {
+  return (
+    <FormControlLabel
+      label={label}
+      control={<Switch checked={value} onChange={(_e, checked) => onChange(checked)} />}
+    />
+  );
+}
