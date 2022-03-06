@@ -50,12 +50,10 @@
     "react-dom": "^17.0.2"
   },
   "lint-staged": {
-    "lint-staged": {
-      "{src,test}/**/*.{js,ts,jsx,tsx}": [
-        "eslint --fix",
-        "prettier --write -u"
-      ],
-      "!**/*.{js,ts,jsx,tsx}": "prettier --write -u"
-    }
+    "{src,test}/**/*.{js,ts,jsx,tsx}": [
+      "eslint --fix",
+      "prettier --write -u"
+    ],
+    "!**/*.{js,ts,jsx,tsx}": "prettier --write -u"
   }
 }
